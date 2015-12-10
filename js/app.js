@@ -86,7 +86,9 @@ var MenuItemView = Backbone.View.extend({
 
     selectItem: function(e) {
 	e.preventDefault();
-	console.log(this.model.get('name') + ' was clicked!');
+	selectedItem.set('selected', true);
+	selectedItem.set('item', this.model);
+	selectedItemView.render();
     },
 
     template: _.template($('#menuItem-template').html(), {variable: 'menuItem'}),
@@ -120,7 +122,7 @@ var SelectedItemView = Backbone.View.extend({
     render: function() {
 	var content;
 	if (this.model.get('selected')) {
-	    content = "You are going to eat: ";
+	    content = "You are going to eat: " + this.model.get('item').get('name');
 	} else {
 	    content = "Aren't you hungry? You have not picked anything to eat yet.";
 	}
