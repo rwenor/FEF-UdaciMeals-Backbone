@@ -79,6 +79,15 @@ var MenuItemView = Backbone.View.extend({
 
     tagName: 'tr',
 
+    events: {
+	'click .select-item': 'selectItem'
+    },
+
+    selectItem: function(e) {
+	e.preventDefault();
+	console.log(this.model.get('name') + ' was clicked!');
+    },
+
     template: _.template($('#menuItem-template').html(), {variable: 'menuItem'}),
 
     render: function() {
