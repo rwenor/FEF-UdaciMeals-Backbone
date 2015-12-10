@@ -51,14 +51,41 @@ MenuItems.add(item1);
 MenuItems.add(item2);
 MenuItems.add(item3);
 
-MenuItems.each(function(menuItem) {
-    $('#table-body').append(
-       '<tr>' +
-	   '<td>' + menuItem.get('name') + '</td>' +
-	   '<td>' + menuItem.get('image') + '</td>' +
-	   '<td>' + menuItem.get('rating') + '</td>' +
-	   '<td>' + menuItem.get('calories') + '</td>' +
-	   '<td>' + menuItem.get('description') + '</td>' +
-       '</tr>'
-    );
+var MenuItemsView = Backbone.View.extend({
+
+    el: '#table-body',
+
+    initialize: function() {
+	this.render();
+    },
+
+    render: function() {
+	this.$el.html('');
+
+	MenuItems.each(function(model) {
+	    var menuItem = new MenuItemView({
+		model: model
+	    });
+
+	    this.$el.append(menuItem.render().el);
+	}.bind(this));
+
+	return this;
+    }
+
 });
+
+var MenuItemView = Backbone.View.extend({
+
+    tagName: 'tr',
+
+    template: _.template($('#menuItem-template').html()),
+
+    render: function() {
+	this.$el.html(this.template(this.model.attributes));
+	return this;
+    }
+
+});
+
+var app = new MenuItemsView();
