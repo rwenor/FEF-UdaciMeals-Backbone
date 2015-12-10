@@ -50,3 +50,15 @@ var MenuItems = new MenuItemsCollection();
 MenuItems.add(item1);
 MenuItems.add(item2);
 MenuItems.add(item3);
+
+MenuItems.each(function(menuItem) {
+    $('#table-body').append(
+       '<tr>' +
+	   '<td>' + menuItem.get('name') + '</td>' +
+	   '<td>' + menuItem.get('image') + '</td>' +
+	   '<td>' + menuItem.get('rating') + '</td>' +
+	   '<td>' + menuItem.get('calories') + '</td>' +
+	   '<td>' + menuItem.get('description') + '</td>' +
+       '</tr>'
+    );
+});
