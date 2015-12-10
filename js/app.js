@@ -57,6 +57,7 @@ var MenuItemsView = Backbone.View.extend({
 
     initialize: function() {
 	this.render();
+	selectedItemView.render();
     },
 
     render: function() {
@@ -96,5 +97,40 @@ var MenuItemView = Backbone.View.extend({
     }
 
 });
+
+var SelectedItem = Backbone.Model.extend({
+    defaults: {
+	selected: false,
+	item: ''
+    }
+});
+
+var selectedItem = new SelectedItem();
+
+var SelectedItemView = Backbone.View.extend({
+    model: selectedItem,
+
+    el: '#selected-item',
+
+    initialize: function() {
+	this.model = selectedItem;
+	this.render();
+    },
+
+    render: function() {
+	var content;
+	if (this.model.get('selected')) {
+	    content = "You are going to eat: ";
+	} else {
+	    content = "Aren't you hungry? You have not picked anything to eat yet.";
+	}
+
+	this.$el.html(content);
+
+	return this;
+    }
+});
+
+var selectedItemView = new SelectedItemView();
 
 var app = new MenuItemsView();
