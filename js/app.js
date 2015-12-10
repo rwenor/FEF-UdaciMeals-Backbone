@@ -79,7 +79,7 @@ var MenuItemView = Backbone.View.extend({
 
     tagName: 'tr',
 
-    template: _.template($('#menuItem-template').html()),
+    template: _.template($('#menuItem-template').html(), {variable: 'menuItem'}),
 
     render: function() {
 	this.$el.html(this.template(this.model.attributes));
