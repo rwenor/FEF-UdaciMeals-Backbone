@@ -23,10 +23,8 @@
 	    <thead>
 		<tr>
 		    <th>Name</th>
-		    <th>Image</th>
 		    <th>Rating</th>
 		    <th>Calories</th>
-		    <th>Description</th>
 		    <th>Select Item?</th>
 		</tr>
 	    </thead>
@@ -36,10 +34,8 @@
 
     <script type="text/template" id="menuItem-template">
 	<td><a href="#item/<%= menuItem.id %>"><%= menuItem.name %></a></td>
-	<td><%= menuItem.image %></td>
 	<td><%= menuItem.rating %></td>
 	<td><%= menuItem.calories %></td>
-	<td><%= menuItem.description %></td>
 	<td>
 	    <button class="select-item">Select Item</button>
 	</td>
