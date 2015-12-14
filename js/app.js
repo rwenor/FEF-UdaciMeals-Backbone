@@ -136,7 +136,16 @@ var SelectedItemView = Backbone.View.extend({
 var ItemDetails = Backbone.View.extend({
     el: '#details',
 
+    events: {
+	'click .close': 'hide'
+    },
+
     template: _.template($('#itemDetails-template').html(), {variable: 'menuItem'}),
+
+    hide: function() {
+	this.$el.html('');
+	foodRouter.navigate('');
+    },
 
     render: function(id) {
 	this.$el.html(this.template(MenuItems.get(id).attributes));
@@ -155,11 +164,9 @@ var FoodRouter = Backbone.Router.extend({
     },
 
     home: function(){
-	console.log("Home page requested.");
     },
 
     item: function(id) {
-	console.log("Food info for " + id);
 	itemDetails.render(id);
     }
 });
