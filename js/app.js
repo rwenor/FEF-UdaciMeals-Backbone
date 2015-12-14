@@ -150,6 +150,10 @@ var ItemDetails = Backbone.View.extend({
     render: function(id) {
 	this.$el.html(this.template(MenuItems.get(id).attributes));
 	return this;
+    },
+
+    clear: function() {
+	this.$el.html('');
     }
 });
 
@@ -164,6 +168,7 @@ var FoodRouter = Backbone.Router.extend({
     },
 
     home: function(){
+	itemDetails.clear();
     },
 
     item: function(id) {
