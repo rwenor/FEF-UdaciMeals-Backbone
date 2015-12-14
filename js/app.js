@@ -133,8 +133,19 @@ var SelectedItemView = Backbone.View.extend({
     }
 });
 
-var selectedItemView = new SelectedItemView();
+var ItemDetails = Backbone.View.extend({
+    el: '#details',
 
+    template: _.template($('#itemDetails-template').html(), {variable: 'menuItem'}),
+
+    render: function(id) {
+	this.$el.html(this.template(MenuItems.get(id).attributes));
+	return this;
+    }
+});
+
+var selectedItemView = new SelectedItemView();
+var itemDetails = new ItemDetails();
 var app = new MenuItemsView();
 
 var FoodRouter = Backbone.Router.extend({
@@ -149,6 +160,7 @@ var FoodRouter = Backbone.Router.extend({
 
     item: function(id) {
 	console.log("Food info for " + id);
+	itemDetails.render(id);
     }
 });
 
