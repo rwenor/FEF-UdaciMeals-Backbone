@@ -136,3 +136,22 @@ var SelectedItemView = Backbone.View.extend({
 var selectedItemView = new SelectedItemView();
 
 var app = new MenuItemsView();
+
+var FoodRouter = Backbone.Router.extend({
+    routes: {
+	"": "home",
+	"item/:id": "item"
+    },
+
+    home: function(){
+	console.log("Home page requested.");
+    },
+
+    item: function(id) {
+	console.log("Food info for " + id);
+    }
+});
+
+var foodRouter = new FoodRouter();
+
+Backbone.history.start();
