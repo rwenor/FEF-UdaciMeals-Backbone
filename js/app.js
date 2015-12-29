@@ -182,5 +182,5 @@
     var foodRouter = new FoodRouter();
 
     Backbone.history.start();
-}());
+})();
 
