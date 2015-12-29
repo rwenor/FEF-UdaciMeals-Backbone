@@ -33,7 +33,7 @@
         image: 'strawberry-pudding.jpg',
         calories: 280,
         rating: 5,
-        description: 'A sweet and tasty pudding filled with strawyberries, blueberries, and raspberries.',
+        description: 'A sweet and tasty pudding filled with strawberries, blueberries, and raspberries.',
         source: 'https://www.pexels.com/photo/restaurant-dessert-pudding-strawberries-3674/',
         photographer: ''
     });
