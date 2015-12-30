@@ -8,7 +8,8 @@
 	    img: '',
 	    calories: 0,
 	    rating: 0,
-	    description: ''
+	    description: '',
+	    selected: false,
         }
     });
 
@@ -26,8 +27,13 @@
         events: {
 	    'click .select-item': 'selectItem'
         },
-
-        selectItem: function(e) {
+          
+        initialize: function( item ) {
+            this.model = item;
+            this.render();
+        },
+        
+              selectItem: function(e) {
 	    e.preventDefault();
 	    selectedItem.set('selected', true);
 	    selectedItem.set('item', this.model);
@@ -43,32 +49,23 @@
 
     });
 
-    var SelectedItem = Backbone.Model.extend({
-        defaults: {
-	    selected: false,
-	    item: ''
-        }
-    });
-
-    var selectedItem = new SelectedItem();
-
     var SelectedItemView = Backbone.View.extend({
-        model: selectedItem,
+        el: 'div',
 
-        el: '#selected-item',
-
-        initialize: function() {
-	    this.model = selectedItem;
-	    this.render();
+        initialize: function( item ) {
+	        this.model = item;
+	        this.render();
         },
 
         render: function() {
-	    var content;
-	    if (this.model.get('selected')) {
-	        content = "You are going to eat: " + this.model.get('item').get('name');
-	    } else {
-	        content = "Aren't you hungry? You have not picked anything to eat yet.";
-	    }
+	        var content;
+	        if (this.model.get('selected')) {
+	            // TODO this belongs in a template
+	            content = "You are going to eat: " + this.model.get('item').get('name');
+	        } else {
+	            // TODO as does this
+	            content = "Aren't you hungry? You have not picked anything to eat yet.";
+	        }
 
 	    this.$el.html(content);
 
@@ -100,7 +97,6 @@
         }
     });
 
-    var selectedItemView = new SelectedItemView();
     var itemDetails = new ItemDetails();
 
     var FoodRouter = Backbone.Router.extend({
@@ -127,7 +123,8 @@
         initialize: function( initialMenu ) {
             this.collection = new MenuItemsCollection( initialMenu );
             MenuItems = this.collection; // <<< temporary shim to keep the selected item view working
-            this.menu = $("#table-body");
+            this.menu = $("#table-body"); 
+            this.selections = $("#selected-items");
             this.render();
             Backbone.history.start();
         },
@@ -135,15 +132,21 @@
         render: function() {
             // Build the menu
             this.collection.each(function( item ) {
+                if (item.selected) {
+                    this.renderSelectedItem( item );
+                }
                 this.renderMenuItem( item );
             }, this );
+            return this;
+        },
+        
+        renderSelectedItem: function( item ) {
+	        var selectedItem = new SelectedItemView( item );
+	        this.selections.append(selectedItem.render().el);
         },
         
         renderMenuItem: function( item ) {
-	        var menuItem = new MenuItemView({
-		        model: item
-	        });
-
+	        var menuItem = new MenuItemView( item );
 	        this.menu.append(menuItem.render().el);
         }
         
