@@ -16,69 +16,9 @@
         model: MenuItem
     });
 
-    var item1 = new MenuItem({
-        id: 'chicken-pomegranate-salad',
-        name: 'Chicken Pomegranate Salad',
-        image: 'chicken-pomegranate-salad.jpg',
-        calories: 430,
-        rating: 4.1,
-        description: 'A simple, sweet and delicious salad of chicken, pomegranates, spinach, and spiced candied walnuts. Served with a side of citrus vinaigrette.',
-        source: 'https://www.pexels.com/photo/salad-pomegranate-chicken-spinach-5916/',
-        photographer: 'Karolina Grabowska.STAFFAGE'
-    });
-
-    var item2 = new MenuItem({
-        id: 'strawberry-pudding',
-        name: 'Strawberry Pudding',
-        image: 'strawberry-pudding.jpg',
-        calories: 280,
-        rating: 5,
-        description: 'A sweet and tasty pudding filled with strawberries, blueberries, and raspberries.',
-        source: 'https://www.pexels.com/photo/restaurant-dessert-pudding-strawberries-3674/',
-        photographer: ''
-    });
-
-    var item3 = new MenuItem({
-        id: 'ham-goat-cheese-croissant',
-        name: 'Ham and Goat Cheese Croissant',
-        image: 'ham-goat-cheese-croissant.jpg',
-        calories: 670,
-        rating: 3.9,
-        description: 'A savory slice of ham topped with a wedge of goat cheese, all on a buttery, flaky croissant.',
-        source: 'https://www.pexels.com/photo/croissant-bakery-plate-food-7390/',
-        photographer: ''
-    });
-
-    var MenuItems = new MenuItemsCollection();
-    MenuItems.add(item1);
-    MenuItems.add(item2);
-    MenuItems.add(item3);
-
-    var MenuItemsView = Backbone.View.extend({
-
-        el: '#table-body',
-
-        initialize: function() {
-	    this.render();
-	    selectedItemView.render();
-        },
-
-        render: function() {
-	    this.$el.html('');
-
-	    MenuItems.each(function(model) {
-	        var menuItem = new MenuItemView({
-		    model: model
-	        });
-
-	        this.$el.append(menuItem.render().el);
-	    }.bind(this));
-
-	    return this;
-        }
-
-    });
-
+    var MenuItems; // <<< temporary shim to keep the selected item view working
+    
+    
     var MenuItemView = Backbone.View.extend({
 
         tagName: 'tr',
@@ -162,7 +102,6 @@
 
     var selectedItemView = new SelectedItemView();
     var itemDetails = new ItemDetails();
-    var app = new MenuItemsView();
 
     var FoodRouter = Backbone.Router.extend({
         routes: {
@@ -185,22 +124,66 @@
 
         el: '#app',
 
-        initialize: function() {
-            // TODO init model
-            // TODO add subviews
+        initialize: function( initialMenu ) {
+            this.collection = new MenuItemsCollection( initialMenu );
+            MenuItems = this.collection; // <<< temporary shim to keep the selected item view working
+            this.menu = $("#table-body");
             this.render();
             Backbone.history.start();
         },
 
         render: function() {
-            // TODO render children
-	    return this;
+            // Build the menu
+            this.collection.each(function( item ) {
+                this.renderMenuItem( item );
+            }, this );
+        },
+        
+        renderMenuItem: function( item ) {
+	        var menuItem = new MenuItemView({
+		        model: item
+	        });
+
+	        this.menu.append(menuItem.render().el);
         }
+        
 
     });
     
     // Start the app
-    new AppView();
+    var initialMenuItems = [{
+        id: 'chicken-pomegranate-salad',
+        name: 'Chicken Pomegranate Salad',
+        image: 'chicken-pomegranate-salad.jpg',
+        calories: 430,
+        rating: 4.1,
+        description: 'A simple, sweet and delicious salad of chicken, pomegranates, spinach, and spiced candied walnuts. Served with a side of citrus vinaigrette.',
+        source: 'https://www.pexels.com/photo/salad-pomegranate-chicken-spinach-5916/',
+        photographer: 'Karolina Grabowska.STAFFAGE'
+    },
+    {
+        id: 'strawberry-pudding',
+        name: 'Strawberry Pudding',
+        image: 'strawberry-pudding.jpg',
+        calories: 280,
+        rating: 5,
+        description: 'A sweet and tasty pudding filled with strawberries, blueberries, and raspberries.',
+        source: 'https://www.pexels.com/photo/restaurant-dessert-pudding-strawberries-3674/',
+        photographer: ''
+    },
+    {
+        id: 'ham-goat-cheese-croissant',
+        name: 'Ham and Goat Cheese Croissant',
+        image: 'ham-goat-cheese-croissant.jpg',
+        calories: 670,
+        rating: 3.9,
+        description: 'A savory slice of ham topped with a wedge of goat cheese, all on a buttery, flaky croissant.',
+        source: 'https://www.pexels.com/photo/croissant-bakery-plate-food-7390/',
+        photographer: ''
+    }];
 
+
+    var app = new AppView( initialMenuItems );
+    
 })();
 
