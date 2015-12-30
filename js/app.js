@@ -181,6 +181,26 @@
 
     var foodRouter = new FoodRouter();
 
-    Backbone.history.start();
+    var AppView = Backbone.View.extend({
+
+        el: '#app',
+
+        initialize: function() {
+            // TODO init model
+            // TODO add subviews
+            this.render();
+            Backbone.history.start();
+        },
+
+        render: function() {
+            // TODO render children
+	    return this;
+        }
+
+    });
+    
+    // Start the app
+    new AppView();
+
 })();
 
