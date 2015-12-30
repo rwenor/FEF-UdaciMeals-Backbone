@@ -16,13 +16,10 @@
     var MenuItemsCollection = Backbone.Collection.extend({
         model: MenuItem
     });
-
-    var MenuItems; // <<< temporary shim to keep the selected item view working
-    
-    
+        
     var MenuItemView = Backbone.View.extend({
-
-        tagName: 'tr',
+    
+        tagName: 'tr',      // Will create a new tag on render
 
         events: {
 	    'click .select-item': 'selectItem'
@@ -33,35 +30,37 @@
             this.render();
         },
         
-              selectItem: function(e) {
-	    e.preventDefault();
-	    selectedItem.set('selected', true);
-	    selectedItem.set('item', this.model);
-	    selectedItemView.render();
+        selectItem: function(e) {
+	        e.preventDefault();
+	        Backbone.trigger('app:select', this.model.id); // post a message using Backbone as a global bus
         },
 
         template: _.template($('#menuItem-template').html(), {variable: 'menuItem'}),
 
         render: function() {
-	    this.$el.html(this.template(this.model.attributes));
-	    return this;
+	        this.$el.html(this.template(this.model.attributes));
+	        return this;
         }
 
     });
 
     var SelectedItemView = Backbone.View.extend({
-        el: 'div',
+        el: '#selected-item',
 
         initialize: function( item ) {
+            this.select( item );
+        },
+        
+        select: function ( item ) {
 	        this.model = item;
 	        this.render();
         },
 
         render: function() {
 	        var content;
-	        if (this.model.get('selected')) {
+	        if (this.model && this.model.get('selected')) {
 	            // TODO this belongs in a template
-	            content = "You are going to eat: " + this.model.get('item').get('name');
+	            content = "You are going to eat: " + this.model.get('name');
 	        } else {
 	            // TODO as does this
 	            content = "Aren't you hungry? You have not picked anything to eat yet.";
@@ -73,7 +72,7 @@
         }
     });
 
-    var ItemDetails = Backbone.View.extend({
+    var ItemDetailView = Backbone.View.extend({
         el: '#details',
 
         events: {
@@ -82,39 +81,41 @@
 
         template: _.template($('#itemDetails-template').html(), {variable: 'menuItem'}),
 
+        initialize: function( item ) {
+            this.select( item );
+        },
+        
+        select: function ( item ) {
+	        this.model = item;
+	        this.render();
+        },
+
         hide: function() {
-	    this.$el.html('');
-	    foodRouter.navigate('');
+	        Backbone.trigger('app:clearSelection'); // put a message on the global event bus
         },
 
         render: function(id) {
-	    this.$el.html(this.template(MenuItems.get(id).attributes));
-	    return this;
+            var content = this.model ? this.template(this.model.attributes) : '';
+	        this.$el.html(content);
+	        return this;
         },
 
-        clear: function() {
-	    this.$el.html('');
-        }
     });
-
-    var itemDetails = new ItemDetails();
 
     var FoodRouter = Backbone.Router.extend({
         routes: {
 	    "": "home",
 	    "item/:id": "item"
         },
-
+        
         home: function(){
-	    itemDetails.clear();
+	        Backbone.trigger('app:clearSelection');
         },
 
         item: function(id) {
-	    itemDetails.render(id);
+	        Backbone.trigger('app:select', id);
         }
     });
-
-    var foodRouter = new FoodRouter();
 
     var AppView = Backbone.View.extend({
 
@@ -122,32 +123,54 @@
 
         initialize: function( initialMenu ) {
             this.collection = new MenuItemsCollection( initialMenu );
-            MenuItems = this.collection; // <<< temporary shim to keep the selected item view working
-            this.menu = $("#table-body"); 
-            this.selections = $("#selected-items");
-            this.render();
+            this.selectedItem = null;
+            
+            var menu = $("#table-body"); 
+            this.collection.each(function( item ) {
+                this.addMenuItem( menu, item );
+            }, this );
+            
+            this.selectedItemView = new SelectedItemView( );
+	         $("#selected-item").append(this.selectedItemView.render().el);
+	         
+	         
+            this.itemDetailView = new ItemDetailView ( );
+            $("#details").append(this.itemDetailView.render().el);
+            
+            this.listenTo(Backbone, 'app:clearSelection', this.clearSelection);
+            this.listenTo(Backbone, 'app:select', this.select);
+            
+            this.router = new FoodRouter( this );
             Backbone.history.start();
         },
 
+        clearSelection: function() {
+            this.select(null);
+        },
+        
+        select: function( id ) {
+            // Note: Only one item will ever be selected
+            var oldSelection = this.collection.findWhere({ selected: true });
+            if (oldSelection) {
+                if (oldSelection.get('id') == id) return; // no change
+                oldSelection.set('selected', false);
+            }
+
+            var newSelection = this.collection.findWhere({ id: (id) });
+            if (newSelection) {
+                newSelection.set('selected', true);
+            }
+            this.selectedItemView.select(newSelection);
+            this.itemDetailView.select(newSelection);
+        },
+        
         render: function() {
-            // Build the menu
-            this.collection.each(function( item ) {
-                if (item.selected) {
-                    this.renderSelectedItem( item );
-                }
-                this.renderMenuItem( item );
-            }, this );
-            return this;
+            return this; // all views will re-render on update
         },
         
-        renderSelectedItem: function( item ) {
-	        var selectedItem = new SelectedItemView( item );
-	        this.selections.append(selectedItem.render().el);
-        },
-        
-        renderMenuItem: function( item ) {
+        addMenuItem: function( menu, item ) {
 	        var menuItem = new MenuItemView( item );
-	        this.menu.append(menuItem.render().el);
+	        menu.append(menuItem.render().el);
         }
         
 
