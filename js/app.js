@@ -138,6 +138,7 @@
 
         clearSelection: function() {
             this.select(null);
+            Backbone.history.navigate('');
         },
         
         select: function( id ) {
