@@ -86,7 +86,7 @@
 	        Backbone.trigger('app:clearSelection'); // put a message on the global event bus
         },
 
-        render: function(id) {
+        render: function() {
             var content = this.model ? this.template(this.model.attributes) : '';
 	        this.$el.html(content);
 	        return this;
@@ -145,7 +145,7 @@
             // Note: Only one item will ever be selected
             var oldSelection = this.collection.findWhere({ selected: true });
             if (oldSelection) {
-                if (oldSelection.get('id') == id) return; // no change
+                if (oldSelection.get('id') === id) { return; }// no change
                 oldSelection.set('selected', false);
             }
 
@@ -202,6 +202,6 @@
     }];
 
 
-    var app = new AppView( initialMenuItems );
+    new AppView( initialMenuItems );
 
 })();
