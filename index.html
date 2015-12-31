@@ -40,11 +40,12 @@
     </script>
 
     <script type="text/template" id="selectedItem-template">
-	<% if ( !menuItem || !menuItem.selected ) { %>
-		<i>Aren't you hungry? You have not picked anything to eat yet.</i>
-	<% } else { %>
-	   You are going to eat: <%= menuItem.name %>
-	<% } %>
+      <h2>Your selection</h2>
+    	<% if ( !menuItem || !menuItem.selected ) { %>
+    		<i>Aren't you hungry? You have not picked anything to eat yet.</i>
+    	<% } else { %>
+    	   You are going to eat: <%= menuItem.name %>
+    	<% } %>
     </script>
 
     <script type="text/template" id="itemDetails-template">

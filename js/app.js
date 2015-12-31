@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    var router; // triggers app actions from URLs. The subviews also set URLs to trigger actions
+
     var MenuItem = Backbone.Model.extend({
         defaults: {
 	    id: '',
@@ -22,7 +24,7 @@
         tagName: 'tr',      // Will create a new tag on render
 
         events: {
-	    'click .select-item': 'selectItem'
+	         'click .select-item': 'selectItem'
         },
 
         initialize: function( item ) {
@@ -32,7 +34,7 @@
 
         selectItem: function(e) {
 	        e.preventDefault();
-	        Backbone.trigger('app:select', this.model.id); // post a message using Backbone as a global bus
+          router.navigate('select/' + this.model.id, { trigger:true });
         },
 
         template: _.template($('#menuItem-template').html(), {variable: 'menuItem'}),
@@ -59,7 +61,8 @@
         template: _.template($('#selectedItem-template').html(), {variable: 'menuItem'}),
 
         render: function() {
-            this.$el.html(this.template(this.model));
+            var content = this.template(this.model ? this.model.attributes : null);
+            this.$el.html(content);
             return this;
         }
     });
@@ -67,9 +70,9 @@
     var ItemDetailView = Backbone.View.extend({
         el: '#details',
 
-        // events: {
-	      //    'click .close': 'hide'
-        // },
+        events: {
+	         'click .select-item': 'selectItem'
+        },
 
         template: _.template($('#itemDetails-template').html(), {variable: 'menuItem'}),
 
@@ -80,8 +83,13 @@
           dialog.modal({backdrop: true });
         },
 
+        selectItem: function(e) {
+	        e.preventDefault();
+          router.navigate('select/' + this.model.id, { trigger:true });
+        },
+
         render: function() {
-            var content = this.model ? this.template(this.model.attributes) : '';
+          var content = this.model ? this.template(this.model.attributes) : '';
 	        this.$el.html(content);
 	        return this;
         },
@@ -91,7 +99,7 @@
     var FoodRouter = Backbone.Router.extend({
         routes: {
 	    '': 'home',
-      'item/:id': 'item',
+      'select/:id': 'item',
       'detail/:id': 'detail'
         },
 
@@ -132,7 +140,6 @@
             this.listenTo(Backbone, 'app:select', this.select);
             this.listenTo(Backbone, 'app:showDetail', this.showDetailPopup);
 
-            this.router = new FoodRouter( this );
             Backbone.history.start();
         },
 
@@ -206,7 +213,7 @@
         photographer: ''
     }];
 
-
+    router = new FoodRouter( );
     new AppView( initialMenuItems );
 
 })();
