@@ -18,7 +18,7 @@
 	        <thead>
 		    <tr>
 		        <th>Name</th>
-		        <th>Rating</th>
+	 	       <th>Rating</th>
 		        <th>Calories</th>
 		        <th>Select Item?</th>
 		    </tr>
@@ -37,6 +37,14 @@
 	<td>
 	    <button class="select-item">Select Item</button>
 	</td>
+    </script>
+
+    <script type="text/template" id="selectedItem-template">
+	<% if ( !menuItem || !menuItem.selected ) { %>
+		<i>Aren't you hungry? You have not picked anything to eat yet.</i>
+	<% } else { %>
+	   You are going to eat: <%= menuItem.name %>
+	<% } %>
     </script>
 
     <script type="text/template" id="itemDetails-template">

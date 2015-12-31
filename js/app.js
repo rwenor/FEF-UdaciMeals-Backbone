@@ -56,19 +56,11 @@
 	        this.render();
         },
 
+        template: _.template($('#selectedItem-template').html(), {variable: 'menuItem'}),
+
         render: function() {
-	        var content;
-	        if (this.model && this.model.get('selected')) {
-	            // TODO this belongs in a template
-	            content = "You are going to eat: " + this.model.get('name');
-	        } else {
-	            // TODO as does this
-	            content = "Aren't you hungry? You have not picked anything to eat yet.";
-	        }
-
-	    this.$el.html(content);
-
-	    return this;
+            this.$el.html(this.template(this.model));
+            return this;
         }
     });
 
