@@ -98,12 +98,12 @@
 
     var FoodRouter = Backbone.Router.extend({
         routes: {
-	    '': 'home',
-      'select/:id': 'item',
-      'detail/:id': 'detail'
+    	    'clear': 'clear',
+          'select/:id': 'item',
+          'detail/:id': 'detail'
         },
 
-        home: function(){
+        clear: function(){
 	        Backbone.trigger('app:clearSelection');
         },
 
@@ -145,7 +145,6 @@
 
         clearSelection: function() {
             this.select(null);
-            Backbone.history.navigate('');
         },
 
         select: function( id ) {
