@@ -31,7 +31,7 @@
     </div>
 
     <script type="text/template" id="menuItem-template">
-	<td><a href="#item/<%= menuItem.id %>"><%= menuItem.name %></a></td>
+	<td><a href="#detail/<%= menuItem.id %>"><%= menuItem.name %></a></td>
 	<td><%= menuItem.rating %></td>
 	<td><%= menuItem.calories %></td>
 	<td>
@@ -48,15 +48,27 @@
     </script>
 
     <script type="text/template" id="itemDetails-template">
-	<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	<h2><%= menuItem.name %></h2>
-	<img src="img/<%= menuItem.image %>" alt="<%= menuItem.name %>" class="img-thumbnail" />
-	<p>
-	    <%= menuItem.description %>
-	</p>
+      <div class="modal fade" id="itemDetails-modal" tabindex="-1" role="dialog" aria-labelledby="modalItemName">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="modalItemName"><%= menuItem.name %></h4>
+      </div>
+      <div class="modal-body">
+	       <img src="img/<%= menuItem.image %>" alt="<%= menuItem.name %>" class="img-thumbnail" />
+	       <p><%= menuItem.description %></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary select-item" data-dismiss="modal">Select Item</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
     </script>
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/backbone/backbone.js"></script>
     <script src="js/app.js"></script>

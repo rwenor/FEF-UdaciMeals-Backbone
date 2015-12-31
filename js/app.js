@@ -67,23 +67,17 @@
     var ItemDetailView = Backbone.View.extend({
         el: '#details',
 
-        events: {
-	    'click .close': 'hide'
-        },
+        // events: {
+	      //    'click .close': 'hide'
+        // },
 
         template: _.template($('#itemDetails-template').html(), {variable: 'menuItem'}),
 
-        initialize: function( item ) {
-            this.select( item );
-        },
-
-        select: function ( item ) {
+        show: function ( item ) {
 	        this.model = item;
 	        this.render();
-        },
-
-        hide: function() {
-	        Backbone.trigger('app:clearSelection'); // put a message on the global event bus
+          var dialog = $('#itemDetails-modal');
+          dialog.modal({backdrop: true });
         },
 
         render: function() {
@@ -97,7 +91,8 @@
     var FoodRouter = Backbone.Router.extend({
         routes: {
 	    '': 'home',
-	    'item/:id': 'item'
+      'item/:id': 'item',
+      'detail/:id': 'detail'
         },
 
         home: function(){
@@ -106,6 +101,10 @@
 
         item: function(id) {
 	        Backbone.trigger('app:select', id);
+        },
+
+        detail: function(id) {
+	        Backbone.trigger('app:showDetail', id);
         }
     });
 
@@ -131,6 +130,7 @@
 
             this.listenTo(Backbone, 'app:clearSelection', this.clearSelection);
             this.listenTo(Backbone, 'app:select', this.select);
+            this.listenTo(Backbone, 'app:showDetail', this.showDetailPopup);
 
             this.router = new FoodRouter( this );
             Backbone.history.start();
@@ -154,7 +154,12 @@
                 newSelection.set('selected', true);
             }
             this.selectedItemView.select(newSelection);
-            this.itemDetailView.select(newSelection);
+        },
+
+        showDetailPopup: function (id) {
+          var item = this.collection.findWhere({ id: (id) });
+          if (!item) { return; }
+          this.itemDetailView.show(item);
         },
 
         render: function() {
