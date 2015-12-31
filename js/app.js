@@ -1,6 +1,6 @@
 (function () {
-    "use strict";
-    
+    'use strict';
+
     var MenuItem = Backbone.Model.extend({
         defaults: {
 	    id: '',
@@ -16,20 +16,20 @@
     var MenuItemsCollection = Backbone.Collection.extend({
         model: MenuItem
     });
-        
+
     var MenuItemView = Backbone.View.extend({
-    
+
         tagName: 'tr',      // Will create a new tag on render
 
         events: {
 	    'click .select-item': 'selectItem'
         },
-          
+
         initialize: function( item ) {
             this.model = item;
             this.render();
         },
-        
+
         selectItem: function(e) {
 	        e.preventDefault();
 	        Backbone.trigger('app:select', this.model.id); // post a message using Backbone as a global bus
@@ -50,7 +50,7 @@
         initialize: function( item ) {
             this.select( item );
         },
-        
+
         select: function ( item ) {
 	        this.model = item;
 	        this.render();
@@ -76,7 +76,7 @@
         initialize: function( item ) {
             this.select( item );
         },
-        
+
         select: function ( item ) {
 	        this.model = item;
 	        this.render();
@@ -96,10 +96,10 @@
 
     var FoodRouter = Backbone.Router.extend({
         routes: {
-	    "": "home",
-	    "item/:id": "item"
+	    '': 'home',
+	    'item/:id': 'item'
         },
-        
+
         home: function(){
 	        Backbone.trigger('app:clearSelection');
         },
@@ -116,22 +116,22 @@
         initialize: function( initialMenu ) {
             this.collection = new MenuItemsCollection( initialMenu );
             this.selectedItem = null;
-            
-            var menu = $("#table-body"); 
+
+            var menu = $('#table-body');
             this.collection.each(function( item ) {
                 this.addMenuItem( menu, item );
             }, this );
-            
+
             this.selectedItemView = new SelectedItemView( );
-	         $("#selected-item").append(this.selectedItemView.render().el);
-	         
-	         
+	         $('#selected-item').append(this.selectedItemView.render().el);
+
+
             this.itemDetailView = new ItemDetailView ( );
-            $("#details").append(this.itemDetailView.render().el);
-            
+            $('#details').append(this.itemDetailView.render().el);
+
             this.listenTo(Backbone, 'app:clearSelection', this.clearSelection);
             this.listenTo(Backbone, 'app:select', this.select);
-            
+
             this.router = new FoodRouter( this );
             Backbone.history.start();
         },
@@ -140,7 +140,7 @@
             this.select(null);
             Backbone.history.navigate('');
         },
-        
+
         select: function( id ) {
             // Note: Only one item will ever be selected
             var oldSelection = this.collection.findWhere({ selected: true });
@@ -156,19 +156,19 @@
             this.selectedItemView.select(newSelection);
             this.itemDetailView.select(newSelection);
         },
-        
+
         render: function() {
             return this; // all views will re-render on update
         },
-        
+
         addMenuItem: function( menu, item ) {
 	        var menuItem = new MenuItemView( item );
 	        menu.append(menuItem.render().el);
         }
-        
+
 
     });
-    
+
     // Start the app
     var initialMenuItems = [{
         id: 'chicken-pomegranate-salad',
@@ -203,6 +203,5 @@
 
 
     var app = new AppView( initialMenuItems );
-    
-})();
 
+})();
