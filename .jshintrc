@@ -16,12 +16,8 @@
   "globals": {
     "wrap": true,
     "unwrap": true,
-    "Polymer": true,
-    "Platform": true,
-    "page": true,
-    "app": true,
-    "MathAndPhysics": true,
-    "PlanetRawData": true,
-    "Promise": true
+    "$": false,
+    "_": false,
+    "Backbone": false
   }
 }
