@@ -16,7 +16,23 @@
   });
 
   var MenuItemsCollection = Backbone.Collection.extend({
-    model: MenuItem
+    model: MenuItem,
+
+    select: function(id) {
+      // Note: Only one item will ever be selected
+      var oldSelection = this.findWhere({selected: true});
+      if (oldSelection) {
+        if (oldSelection.get('id') === id) { return oldSelection; }// no change
+        oldSelection.set('selected', false);
+      }
+
+      var newSelection = this.findWhere({id: (id)});
+      if (newSelection) {
+        newSelection.set('selected', true);
+      }
+      return newSelection;
+    }
+
   });
 
   var MenuItemView = Backbone.View.extend({
@@ -154,17 +170,7 @@
     },
 
     select: function(id) {
-      // Note: Only one item will ever be selected
-      var oldSelection = this.collection.findWhere({selected: true});
-      if (oldSelection) {
-        if (oldSelection.get('id') === id) { return; }// no change
-        oldSelection.set('selected', false);
-      }
-
-      var newSelection = this.collection.findWhere({id: (id)});
-      if (newSelection) {
-        newSelection.set('selected', true);
-      }
+      var newSelection = this.collection.select(id);
       this.selectedItemView.select(newSelection);
     },
 
