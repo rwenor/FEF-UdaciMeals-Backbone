@@ -17,6 +17,7 @@
 
   var MenuItemsCollection = Backbone.Collection.extend({
     model: MenuItem,
+    currentSelection: null,
 
     select: function(id) {
       // Note: Only one item will ever be selected
@@ -30,7 +31,8 @@
       if (newSelection) {
         newSelection.set('selected', true);
       }
-      return newSelection;
+      this.currentSelection = newSelection;
+      return this.currentSelection;
     }
 
   });
@@ -145,7 +147,6 @@
 
     initialize: function(initialMenu) {
       this.collection = new MenuItemsCollection(initialMenu);
-      this.selectedItem = null;
 
       var menu = $('#table-body');
       this.collection.each(function(item) {
