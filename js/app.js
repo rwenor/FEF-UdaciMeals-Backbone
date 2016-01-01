@@ -18,6 +18,7 @@
   var MenuItemsCollection = Backbone.Collection.extend({
     model: MenuItem,
     currentSelection: null,
+    url: 'api/items',
 
     select: function(id) {
       // Note: Only one item will ever be selected
@@ -143,9 +144,20 @@
 
     el: '#app',
 
-    initialize: function(initialMenu) {
-      this.collection = new MenuItemsCollection(initialMenu);
+    initialize: function() {
+      this.collection = new MenuItemsCollection();
 
+      this.listenTo(Backbone, 'app:clearSelection', this.clearSelection);
+      this.listenTo(Backbone, 'app:select', this.select);
+      this.listenTo(Backbone, 'app:showDetail', this.showDetailPopup);
+
+      this.collection.fetch({success: _.bind(this._buildUI, this)});
+
+      Backbone.history.start();
+    },
+
+    _buildUI: function() {
+      // Transplant all the UI construction into here
       var menu = $('#table-body');
       this.collection.each(function(item) {
         this.addMenuItem(menu, item);
@@ -187,40 +199,7 @@
 
   });
 
-  // Start the app
-  // jscs:disable maximumLineLength
-  var initialMenuItems = [{
-    id: 'chicken-pomegranate-salad',
-    name: 'Chicken Pomegranate Salad',
-    image: 'chicken-pomegranate-salad.jpg',
-    calories: 430,
-    rating: 4.1,
-    description: 'A simple, sweet and delicious salad of chicken, pomegranates, spinach, and spiced candied walnuts. Served with a side of citrus vinaigrette.',
-    source: 'https://www.pexels.com/photo/salad-pomegranate-chicken-spinach-5916/',
-    photographer: 'Karolina Grabowska.STAFFAGE'
-  },
-    {
-      id: 'strawberry-pudding',
-      name: 'Strawberry Pudding',
-      image: 'strawberry-pudding.jpg',
-      calories: 280,
-      rating: 5,
-      description: 'A sweet and tasty pudding filled with strawberries, blueberries, and raspberries.',
-      source: 'https://www.pexels.com/photo/restaurant-dessert-pudding-strawberries-3674/',
-      photographer: ''
-    },
-    {
-      id: 'ham-goat-cheese-croissant',
-      name: 'Ham and Goat Cheese Croissant',
-      image: 'ham-goat-cheese-croissant.jpg',
-      calories: 670,
-      rating: 3.9,
-      description: 'A savory slice of ham topped with a wedge of goat cheese, all on a buttery, flaky croissant.',
-      source: 'https://www.pexels.com/photo/croissant-bakery-plate-food-7390/',
-      photographer: ''
-    }];
-
   router = new FoodRouter();
-  new AppView(initialMenuItems);
+  new AppView();
 
 })();
