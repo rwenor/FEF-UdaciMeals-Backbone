@@ -67,8 +67,8 @@
   var SelectedItemView = Backbone.View.extend({
     el: '#selected-item',
 
-    initialize: function(item) {
-      this.select(item);
+    initialize: function() {
+      this.select(null);
     },
 
     select: function(item) {
@@ -95,10 +95,8 @@
     template: _.template($('#itemDetails-template').html(), {variable: 'menuItem'}),
 
     initialize: function() {
-          this.$el.on('shown.bs.modal', function() {
-            router.navigate('', {trigger: false, replace: true});
-          });
-        },
+      this.model = null;
+    },
 
     show: function(item) {
       this.model = item;
@@ -112,12 +110,12 @@
     },
 
     render: function() {
-          if (this.model) {
-            var content = this.template(this.model.attributes);
-            this.$el.html(content);
-          }
-          return this;
-        },
+      if (this.model) {
+        var content = this.template(this.model.attributes);
+        this.$el.html(content);
+      }
+      return this;
+    },
 
   });
 
@@ -154,10 +152,7 @@
       }, this);
 
       this.selectedItemView = new SelectedItemView();
-      $('#selected-item').append(this.selectedItemView.render().el);
-
       this.itemDetailView = new ItemDetailView();
-      $('#itemDetails-modal').append(this.itemDetailView.render().el);
 
       this.listenTo(Backbone, 'app:clearSelection', this.clearSelection);
       this.listenTo(Backbone, 'app:select', this.select);
