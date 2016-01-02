@@ -12,13 +12,16 @@
       rating: 0,
       description: '',
       selected: false,
-    }
+    },
+    // The next two properties are used to construct the REST URL
+    urlRoot: 'api/items', // will be combined with an ID
+    id: 'id',
   });
 
   var MenuItemsCollection = Backbone.Collection.extend({
     model: MenuItem,
     currentSelection: null,
-    url: 'api/items',
+    url: 'api/items', // used for reading/writing the whole collection
 
     select: function(id) {
       // Note: Only one item will ever be selected
@@ -146,14 +149,24 @@
 
     initialize: function() {
       this.collection = new MenuItemsCollection();
+      this.collection.fetch({success: _.bind(this._afterFetch, this)});
 
+      Backbone.history.start();
+    },
+
+    _afterFetch: function() {
+      this._buildUI();
+
+      // Listen to messages from the router (moved from initialize)
       this.listenTo(Backbone, 'app:clearSelection', this.clearSelection);
       this.listenTo(Backbone, 'app:select', this.select);
       this.listenTo(Backbone, 'app:showDetail', this.showDetailPopup);
 
-      this.collection.fetch({success: _.bind(this._buildUI, this)});
-
-      Backbone.history.start();
+      // Listen for a change event from each model item (i.e. when
+      // changing the selected item
+      this.collection.each(function(item) {
+        this.listenTo(item, 'change', this.onItemChange);
+      }, this);
     },
 
     _buildUI: function() {
@@ -183,13 +196,19 @@
     },
 
     showDetailPopup: function(id) {
-          var item = this.collection.findWhere({id: (id)});
-          if (!item) { return; }
-          this.itemDetailView.show(item);
-        },
+      var item = this.collection.findWhere({id: (id)});
+      if (!item) { return; }
+      this.itemDetailView.show(item);
+    },
 
     render: function() {
       return this; // all views will re-render on update
+    },
+
+    // Had to figure this out by reading the backbone source code.
+    // http://backbonejs.org/docs/backbone.html
+    onItemChange: function(modelItem) {
+      modelItem.save(); // post the changed model back to the server
     },
 
     addMenuItem: function(menu, item) {
