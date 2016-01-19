@@ -27,7 +27,7 @@
       // Note: Only one item will ever be selected
       var oldSelection = this.findWhere({selected: true});
       if (oldSelection) {
-        if (oldSelection.get('id') === id) { return oldSelection; }// no change
+        if (oldSelection.get('id') === id) { return oldSelection; } // no change
         oldSelection.set('selected', false);
       }
 
@@ -43,7 +43,7 @@
 
   var MenuItemView = Backbone.View.extend({
 
-    tagName: 'tr',      // Will create a new tag on render
+    tagName: 'tr',
 
     events: {
       'click .select-item': 'selectItem'
@@ -170,7 +170,6 @@
     },
 
     _buildUI: function() {
-      // Transplant all the UI construction into here
       var menu = $('#table-body');
       this.collection.each(function(item) {
         this.addMenuItem(menu, item);
@@ -205,8 +204,6 @@
       return this; // all views will re-render on update
     },
 
-    // Had to figure this out by reading the backbone source code.
-    // http://backbonejs.org/docs/backbone.html
     onItemChange: function(modelItem) {
       modelItem.save(); // post the changed model back to the server
     },
