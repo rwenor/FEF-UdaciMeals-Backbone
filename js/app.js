@@ -181,8 +181,6 @@
       this.listenTo(Backbone, 'app:clearSelection', this.clearSelection);
       this.listenTo(Backbone, 'app:select', this.select);
       this.listenTo(Backbone, 'app:showDetail', this.showDetailPopup);
-
-      Backbone.history.start();
     },
 
     clearSelection: function() {
