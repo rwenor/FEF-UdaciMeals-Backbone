@@ -23,6 +23,15 @@
     currentSelection: null,
     url: 'api/items', // used for reading/writing the whole collection
 
+    // Backbone expects an array from the server, but this can lead to
+    // JSON hijacking.
+    // See http://haacked.com/archive/2009/06/25/json-hijacking.aspx/
+    // The easy fix is to override the parse method (called by fetch)
+    // to extract the required information.
+    parse: function(response) {
+      return response.menu;
+    },
+
     select: function(id) {
       // Note: Only one item will ever be selected
       var oldSelection = this.findWhere({selected: true});
