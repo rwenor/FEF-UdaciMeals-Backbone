@@ -225,4 +225,37 @@
   router = new FoodRouter();
   new AppView();
 
+  var s = 'Split this <%> p1 <%> og mer <%> p2 <%>!';
+  var sl = s.split('<%>');
+  var resS = '""';
+  console.log(sl);
+
+  sl.forEach(function(itm, index, array) {
+    // console.log(index);
+
+    if (index % 2) {
+      console.log('+ '+ 'params.'+ itm.trim());
+      resS += '+ '+ 'params.'+ itm.trim();
+    } else {
+      console.log(' +"'+ itm +'"');
+      resS += ' +"'+ itm +'"';
+    };
+
+  });
+
+  console.log(resS);
+
+  // var myFunc = new Function("params", "return params.p1 + params.p2;");
+  var myFunc = new Function("params", "return "+ resS +";");
+  console.log(myFunc({p1: 3, p2: 2}));
+
+  // function templateF(tempStr, param) {
+  //   var maxRepl = 10;
+  //
+  //   for (var i = 0; i < maxRepl, i += 1) {
+  //
+  //   };
+  // };
+
+  console.log('Hei');
 })();
